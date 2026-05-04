@@ -1,4 +1,4 @@
-name: Build and Provide Apps
+name: Build and Provide Apps (Hard Force)
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_all_apps:
-    name: Build All BringApp Applications
+    name: Force Build All BringApp Applications
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -17,31 +17,35 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # Uses the latest stable version
+          channel: 'stable'
 
-      - name: Build Users App (Android)
+      - name: Force Build Users App (Android)
         run: |
           cd users_food_app
+          flutter pub upgrade --major-versions || true
           flutter pub get
-          flutter build apk --release
+          flutter build apk --release --no-pub
       
-      - name: Build Riders App (Android)
+      - name: Force Build Riders App (Android)
         run: |
           cd riders_food_app
+          flutter pub upgrade --major-versions || true
           flutter pub get
-          flutter build apk --release
+          flutter build apk --release --no-pub
 
-      - name: Build Sellers App (Android)
+      - name: Force Build Sellers App (Android)
         run: |
           cd sellers_food_app
+          flutter pub upgrade --major-versions || true
           flutter pub get
-          flutter build apk --release
+          flutter build apk --release --no-pub
 
-      - name: Build Admin Web Portal (Web)
+      - name: Force Build Admin Web Portal (Web)
         run: |
           cd bringapp_admin_web_portal
+          flutter pub upgrade --major-versions || true
           flutter pub get
-          flutter build web --release
+          flutter build web --release --no-pub
 
       - name: Upload Users App APK
         uses: actions/upload-artifact@v4
