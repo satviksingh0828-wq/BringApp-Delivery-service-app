@@ -17,7 +17,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '2.10.5'
+          channel: 'stable' # Uses the latest stable version
 
       - name: Build Users App (Android)
         run: |
