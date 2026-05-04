@@ -1,4 +1,4 @@
-name: Build and Provide Apps (Hard Force)
+name: Build and Provide Apps (Auto-Patch)
 
 on:
   push:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_all_apps:
-    name: Force Build All BringApp Applications
+    name: Auto-Patch and Build All Apps
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -19,33 +19,37 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Force Build Users App (Android)
+      - name: Patch and Build Users App (Android)
         run: |
           cd users_food_app
+          # Fix Gradle plugin evaluation error
+          sed -i 's/apply from: "$flutterRoot\/packages\/flutter_tools\/gradle\/app_plugin_loader.gradle"/apply from: "$flutterRoot\/packages\/flutter_tools\/gradle\/flutter.gradle"/' android/settings.gradle || true
           flutter pub upgrade --major-versions || true
           flutter pub get
-          flutter build apk --release --no-pub
+          flutter build apk --release
       
-      - name: Force Build Riders App (Android)
+      - name: Patch and Build Riders App (Android)
         run: |
           cd riders_food_app
+          sed -i 's/apply from: "$flutterRoot\/packages\/flutter_tools\/gradle\/app_plugin_loader.gradle"/apply from: "$flutterRoot\/packages\/flutter_tools\/gradle\/flutter.gradle"/' android/settings.gradle || true
           flutter pub upgrade --major-versions || true
           flutter pub get
-          flutter build apk --release --no-pub
+          flutter build apk --release
 
-      - name: Force Build Sellers App (Android)
+      - name: Patch and Build Sellers App (Android)
         run: |
           cd sellers_food_app
+          sed -i 's/apply from: "$flutterRoot\/packages\/flutter_tools\/gradle\/app_plugin_loader.gradle"/apply from: "$flutterRoot\/packages\/flutter_tools\/gradle\/flutter.gradle"/' android/settings.gradle || true
           flutter pub upgrade --major-versions || true
           flutter pub get
-          flutter build apk --release --no-pub
+          flutter build apk --release
 
-      - name: Force Build Admin Web Portal (Web)
+      - name: Patch and Build Admin Web Portal (Web)
         run: |
           cd bringapp_admin_web_portal
           flutter pub upgrade --major-versions || true
           flutter pub get
-          flutter build web --release --no-pub
+          flutter build web --release
 
       - name: Upload Users App APK
         uses: actions/upload-artifact@v4
