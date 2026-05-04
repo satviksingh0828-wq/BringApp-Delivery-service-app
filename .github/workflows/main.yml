@@ -1,0 +1,68 @@
+name: Build and Provide Apps
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  build_all_apps:
+    name: Build All BringApp Applications
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '2.10.5' # Compatible with your project's SDK constraints
+
+      - name: Build Users App (Android)
+        run: |
+          cd BringApp-Delivery-service-app/users_food_app
+          flutter pub get
+          flutter build apk --release
+      
+      - name: Build Riders App (Android)
+        run: |
+          cd BringApp-Delivery-service-app/riders_food_app
+          flutter pub get
+          flutter build apk --release
+
+      - name: Build Sellers App (Android)
+        run: |
+          cd BringApp-Delivery-service-app/sellers_food_app
+          flutter pub get
+          flutter build apk --release
+
+      - name: Build Admin Web Portal (Web)
+        run: |
+          cd BringApp-Delivery-service-app/bringapp_admin_web_portal
+          flutter pub get
+          flutter build web --release
+
+      - name: Upload Users App APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: users-app-apk
+          path: BringApp-Delivery-service-app/users_food_app/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload Riders App APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: riders-app-apk
+          path: BringApp-Delivery-service-app/riders_food_app/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload Sellers App APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: sellers-app-apk
+          path: BringApp-Delivery-service-app/sellers_food_app/build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload Admin Web Portal Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-web-portal
+          path: BringApp-Delivery-service-app/bringapp_admin_web_portal/build/web/
